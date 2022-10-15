@@ -50,7 +50,8 @@ console.log(`Clear dist ...`);
 // ================================================
 // input base name
 const inputBaseName = path.basename(inputFile, '.ts');
-const compliedInputFile = `dist/out-tsc/${inputBaseName}.js`;
+const compliedInputFile = `dist/out-tsc/src/${inputBaseName}.js`;
+console.log(compliedInputFile)
 async function build(input, output) {
     // create a bundle
     const bundle = await rollup.rollup(input);
@@ -117,6 +118,8 @@ async function buildAll() {
     // clear build
     // ================================================
     fs.removeSync(path.resolve(__dirname, '../dist/out-tsc'));
+    fs.removeSync(path.resolve(__dirname, '../dist/demo'));
+    fs.removeSync(path.resolve(__dirname, '../dist/demo-app'));
     // ------------------------------------------------
     // done
     // ================================================
