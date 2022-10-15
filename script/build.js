@@ -104,6 +104,12 @@ async function buildAll() {
     // update package
     package.main = `umd/${name}.min.js`;
     // ------------------------------------------------
+    // copy cli stuff & copy schema source
+    // ================================================
+    fs.copySync(path.resolve(__dirname, '../bin'), path.resolve(__dirname, '../dist/bin'));
+    fs.copySync(path.resolve(__dirname, '../cli'), path.resolve(__dirname, '../dist/cli'));
+    console.log(`Copy cli stuff ...`);
+    // ------------------------------------------------
     // write package.json and copy files
     // ================================================
     fs.outputJsonSync(path.resolve(__dirname, '../dist/package.json') , package, { spaces: '  ' });
