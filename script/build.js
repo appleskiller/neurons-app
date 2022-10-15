@@ -50,7 +50,7 @@ console.log(`Clear dist ...`);
 // ================================================
 // input base name
 const inputBaseName = path.basename(inputFile, '.ts');
-const compliedInputFile = `dist/out-tsc/src/${inputBaseName}.js`;
+const compliedInputFile = `dist/out-tsc/${inputBaseName}.js`;
 console.log(compliedInputFile)
 async function build(input, output) {
     // create a bundle
@@ -80,6 +80,16 @@ const baseInputOption = {
 
 util.exec(`tsc -p tsconfig.json -d --declarationDir dist --outDir dist/out-tsc`);
 package.typings = `${inputBaseName}.d.ts`;
+// 处理out-tsc
+fs.removeSync('dist/out-tsc/demo');
+fs.removeSync('dist/out-tsc/demo-app');
+fs.copySync('dist/out-tsc/src', 'dist/out-tsc');
+fs.removeSync('dist/out-tsc/src');
+// 处理dist
+fs.removeSync(path.resolve(__dirname, '../dist/demo'));
+fs.removeSync(path.resolve(__dirname, '../dist/demo-app'));
+fs.copySync('dist/src', 'dist');
+fs.removeSync('dist/src');
 
 async function buildAll() {
     // ------------------------------------------------
@@ -124,8 +134,6 @@ async function buildAll() {
     // clear build
     // ================================================
     fs.removeSync(path.resolve(__dirname, '../dist/out-tsc'));
-    fs.removeSync(path.resolve(__dirname, '../dist/demo'));
-    fs.removeSync(path.resolve(__dirname, '../dist/demo-app'));
     // ------------------------------------------------
     // done
     // ================================================
