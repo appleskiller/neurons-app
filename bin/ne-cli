@@ -1,0 +1,2 @@
+var cli = require('../cli/ne-cli.js');
+cli.execute();

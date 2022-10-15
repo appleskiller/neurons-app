@@ -1,0 +1,5 @@
+
+export const APP_TOKENS = {
+    'APP_ROUTER': 'APP_ROUTER',
+    'APP_PRELOADER': 'APP_PRELOADER',
+}
