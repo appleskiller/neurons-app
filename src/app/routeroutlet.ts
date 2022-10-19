@@ -14,14 +14,21 @@ export class RouterOutlet {
     @Element('container') container: HTMLElement;
     @Inject(APP_TOKENS.APP_ROUTER) router: IRouter;
 
+    protected placeholder: Comment;
     protected component: ClassLike;
     protected ref: IBindingRef<any>;
 
     onInit() {
+        this.placeholder = document.createComment('');
+        this.container.parentNode.insertBefore(this.placeholder, this.container);
+        this.container.parentNode.removeChild(this.container);
         this.router && this.onNavigateChange(this.router.currentState);
         this.router.navigateChange.listen(navigateData => {
             this.onNavigateChange(navigateData.to);
         })
+    }
+    onDestroy() {
+        this.ref && this.ref.destroy();
     }
     protected onNavigateChange(navigateState: INavigateState) {
         const component = navigateState && navigateState.state.component ? navigateState.state.component : null;
@@ -35,7 +42,7 @@ export class RouterOutlet {
     protected createComponent(component: ClassLike) {
         if (!component) return null;
         const ref = bind(component, {
-            container: this.container,
+            placeholder: this.placeholder,
             state: {},
         });
         return ref;
