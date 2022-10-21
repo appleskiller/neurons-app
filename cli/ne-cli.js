@@ -314,7 +314,6 @@ function serve(neconfig) {
     devServerOptions.proxy['/index.html'] = {
         bypass: function (req, res, proxyOptions) {
             if (req.path === '/') {
-                console.log(req.path);
                 // 插入入口脚本
                 let content = fs.readFileSync(indexPath, 'utf8');
                 if (entryStats.dirty) {
