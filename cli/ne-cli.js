@@ -313,19 +313,24 @@ function serve(neconfig) {
     const indexPath = path.resolve(neconfig.index);
     devServerOptions.proxy['/index.html'] = {
         bypass: function (req, res, proxyOptions) {
-            // 插入入口脚本
-            let content = fs.readFileSync(indexPath, 'utf8');
-            if (entryStats.dirty) {
-                entryStats.scriptContent = generateEntryScripts(entryStats.files, '');
+            if (req.path === '/') {
+                console.log(req.path);
+                // 插入入口脚本
+                let content = fs.readFileSync(indexPath, 'utf8');
+                if (entryStats.dirty) {
+                    entryStats.scriptContent = generateEntryScripts(entryStats.files, '');
+                }
+                content = content.replace(/\<\s*?\/\s*?body\s*?\>/, match => {
+                    return '\n        ' + entryStats.scriptContent + '\n    ' + match;
+                });
+                res.writeHead(200, {
+                    'Content-Type': 'text/html; charset=UTF-8',
+                });
+                res.end(content);
+                return false;
+            } else {
+                return req.path;
             }
-            content = content.replace(/\<\s*?\/\s*?body\s*?\>/, match => {
-                return '\n        ' + entryStats.scriptContent + '\n    ' + match;
-            });
-            res.writeHead(200, {
-                'Content-Type': 'text/html; charset=UTF-8',
-            });
-            res.end(content);
-            return false;
         }
     }
     startDevServer(webpackConfig, devServerOptions, entryStats);
