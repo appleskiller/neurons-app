@@ -90,12 +90,36 @@ export class NeApp {
             token: APP_TOKENS.APP_PRELOADER,
             use: preloader
         });
-        try {
-            this.appRef = bind(source, option);
-        } catch (error) {
-            return Promise.reject(new NeBootstrapError('应用启动失败。', error))
-        }
+        // 处理预加载
+        return this.preload().then(() => {
+            try {
+                this.appRef = bind(source, option);
+            } catch (error) {
+                return this.bootstrapError(new NeBootstrapError('应用启动失败', error));
+            }
+            return this.bootstrapSuccess();
+        }).catch(error => {
+            return this.bootstrapError(new NeBootstrapError('应用预加载失败', error));
+        })
+    }
+    protected preload(): Promise<any> {
+        if (!this.option.usePreloader || !this.option.preloaderTasks || !this.option.preloaderTasks.length) return Promise.resolve();
+        preloader.show();
+        return Promise.all(this.option.preloaderTasks.map(task => task()))
+    }
+    protected bootstrapSuccess(): Promise<void> {
+        if (!this.option.usePreloader || !this.option.preloaderTasks || !this.option.preloaderTasks.length) return Promise.resolve();
+        if (!!this.option.manualHidePreloader) return Promise.resolve();
+        preloader.hide();
         return Promise.resolve();
+    }
+    protected bootstrapError(error): Promise<any> {
+        if (!this.option.usePreloader || !this.option.preloaderTasks || !this.option.preloaderTasks.length) return Promise.reject(error);
+        if (!!this.option.manualHidePreloader) return Promise.reject(error);
+        preloader.error(error.message, error, () => {
+            window.location.reload();
+        });
+        return Promise.reject(error);
     }
 }
 

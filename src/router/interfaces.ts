@@ -80,9 +80,14 @@ export interface IRouterStatic {
 }
 
 export interface IApplicationOption {
+    // router
     Router?: IRouterStatic;
     routes?: IRouterConfig[];
     routerOption?: IRouterOption;
+    // preloader
+    usePreloader?: boolean;
+    manualHidePreloader?: boolean;
+    preloaderTasks?: (() => Promise<void>)[];
 }
 
 export const noop = {};

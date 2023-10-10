@@ -120,6 +120,7 @@ export class Preloader implements IPreloader {
     private _isFirstLoad = true;
 
     show(): void {
+        this.active();
         this._showLoading();
     }
     hide(immediately?: boolean): void {
@@ -128,7 +129,6 @@ export class Preloader implements IPreloader {
     error(msg: string, error?: Error, retryFn?: () => void): void {
         this._showError(msg, error, retryFn);
     }
-
     protected active() {
         this._container = document.body.querySelector('.preloading-container');
         if (!this._container) {
