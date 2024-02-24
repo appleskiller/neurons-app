@@ -1,6 +1,6 @@
 
-import { bind, Binding, Element, Inject, Property } from 'neurons';
-import { ClassLike } from 'neurons-injector';
+import { bind, Binding, BINDING_TOKENS, Element, Inject, Property } from 'neurons';
+import { ClassLike, IInjector } from 'neurons-injector';
 import { IBindingRef } from 'neurons/binding/common/interfaces';
 import { INavigateState, IRouter } from '../router/interfaces';
 import { APP_TOKENS } from './tokens';
@@ -12,6 +12,7 @@ import { APP_TOKENS } from './tokens';
 })
 export class RouterOutlet {
     @Element('container') container: HTMLElement;
+    @Inject(BINDING_TOKENS.INJECTOR) injector: IInjector;
     @Inject(APP_TOKENS.APP_ROUTER) router: IRouter;
 
     protected placeholder: Comment;
@@ -44,6 +45,7 @@ export class RouterOutlet {
         const ref = bind(component, {
             placeholder: this.placeholder,
             state: {},
+            parentInjector: this.injector
         });
         return ref;
     }
