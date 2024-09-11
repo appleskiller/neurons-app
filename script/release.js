@@ -4,15 +4,18 @@ var fs = require('fs-extra');
 var util = require('./util');
 
 util.required('git');
+var args = util.parseArgs();
+var registry = args.registry === 'taobao' ? 'https://registry.npmmirror.com' : 'https://registry.npmjs.org';
+var registryArgs = args.registry === 'taobao' ? '-- --registry taobao' : '';
 
 // update internal deps
-util.exec('npm run update-deps');
+util.exec(`npm run update-deps ${registryArgs}`);
 // test
 util.exec('npm run test-once');
 
 var package = fs.readJsonSync(path.resolve(__dirname, '../package.json'));
 // verify version
-var latestVersion = util.exec(`npm --registry https://registry.npmjs.org view ${package.name} version`).trim();
+var latestVersion = util.exec(`npm --registry ${registry} view ${package.name} version`).trim();
 if (semver.lte(package.version, latestVersion)) {
     package.version = [semver.major(latestVersion), semver.minor(latestVersion), semver.patch(latestVersion) + 1].join('.');
     fs.outputJsonSync(path.resolve(__dirname, '../package.json') , package, { spaces: '  ' })
